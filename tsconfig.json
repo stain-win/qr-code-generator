@@ -7,14 +7,14 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "ES6",
     "module": "commonjs",
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@qr-code-generator/.": ["src/index.ts"]
+      "@stain-win/qr-code-generator/.": ["src/index.ts"]
     },
     "types": ["vitest"]
   },

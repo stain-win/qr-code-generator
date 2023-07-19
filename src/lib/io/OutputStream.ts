@@ -3,7 +3,7 @@
  * @author Kazuhiko Arase
  */
 export abstract class OutputStream {
-    constructor() {
+    protected constructor() {
         // empty
     }
 

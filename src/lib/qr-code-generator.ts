@@ -1,4 +1,3 @@
-
 import {QR8BitByte} from './qr/8BitByte';
 import { QRCode } from "./qr/qrCode";
 export class QrCodeGenerator extends QRCode {
