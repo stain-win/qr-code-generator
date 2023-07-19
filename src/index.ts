@@ -1,1 +1,1 @@
-export * from './lib/qr-code-generator';
+export {QrCodeGenerator} from './lib/qr-code-generator';

@@ -1,13 +1,14 @@
 {
-  "name": "@qr-code-generator/.",
+  "name": "@stain-win/qr-code-generator",
   "version": "0.0.1",
-  "license": "MIT",
+  "description": "QRCode generator library",
+  "main": "index.js",
   "scripts": {
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "changelog": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s",
+    "prepublishOnly": "npm run build && npm run test"
   },
-  "private": true,
-  "dependencies": {},
   "devDependencies": {
     "@nx/eslint-plugin": "16.5.2",
     "@nx/js": "16.5.2",
@@ -19,6 +20,8 @@
     "@typescript-eslint/parser": "^5.60.1",
     "@vitest/coverage-c8": "~0.32.0",
     "@vitest/ui": "~0.32.0",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "~8.15.0",
     "eslint-config-prettier": "8.1.0",
     "nx": "16.5.2",
@@ -28,5 +31,25 @@
     "vite-tsconfig-paths": "~4.2.0",
     "vitest": "~0.32.0"
   },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stain-win/qr-code-generator.git"
+  },
+  "keywords": [
+    "qrcode",
+    "generator",
+    "typescript"
+  ],
+  "author": "Miroslav Mitrovic",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stain-win/qr-code-generator/issues"
+  },
+  "homepage": "https://github.com/stain-win/qr-code-generator#readme",
   "type": "commonjs"
 }
