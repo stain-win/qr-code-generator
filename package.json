@@ -1,6 +1,6 @@
 {
   "name": "@stain-win/qr-code-generator",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "QRCode generator library",
   "main": "dist/qr-code-generator/src/index.js",
   "files": [
