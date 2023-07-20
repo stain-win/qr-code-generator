@@ -1,25 +1,17 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite';
-
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   cacheDir: './node_modules/.vite/qr-code-generator',
-
   plugins: [
     viteTsConfigPaths({
       root: './',
     }),
   ],
-
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [
-  //    viteTsConfigPaths({
-  //      root: './',
-  //    }),
-  //  ],
-  // },
+  build: {
+    sourcemap: true
+  },
 
   test: {
     globals: true,
