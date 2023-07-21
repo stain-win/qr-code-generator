@@ -1,11 +1,10 @@
-import {OutputStream} from './OutputStream';
+import { OutputStream } from './OutputStream';
 
 /**
  * ByteArrayOutputStream
  * @author Kazuhiko Arase
  */
 export class ByteArrayOutputStream extends OutputStream {
-
     private bytes: number[] = [];
 
     constructor() {

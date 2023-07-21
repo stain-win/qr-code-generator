@@ -1,11 +1,10 @@
-import {InputStream} from './InputStream';
+import { InputStream } from './InputStream';
 
 /**
  * Base64DecodeInputStream
  * @author Kazuhiko Arase
  */
 export class Base64DecodeInputStream extends InputStream {
-
     private buffer = 0;
     private buflen = 0;
 
@@ -14,31 +13,24 @@ export class Base64DecodeInputStream extends InputStream {
     }
 
     public readByte(): number {
-
         while (this.buflen < 8) {
-
             const c = this.istream.readByte();
 
             if (c == -1) {
-
                 if (this.buflen == 0) {
                     return -1;
                 }
 
                 throw 'unexpected end of file./' + this.buflen;
-
             } else if (c == '='.charCodeAt(0)) {
-
                 this.buflen = 0;
                 return -1;
-
             } else if (Base64DecodeInputStream.isWhitespace(c)) {
                 // ignore if whitespace.
                 continue;
             }
 
-            this.buffer = (this.buffer << 6) |
-                Base64DecodeInputStream.decode(c);
+            this.buffer = (this.buffer << 6) | Base64DecodeInputStream.decode(c);
             this.buflen += 6;
         }
 
@@ -48,10 +40,12 @@ export class Base64DecodeInputStream extends InputStream {
     }
 
     private static isWhitespace(c: number): boolean {
-        return c == '\v'.charCodeAt(0) ||
+        return (
+            c == '\v'.charCodeAt(0) ||
             c == '\t'.charCodeAt(0) ||
             c == '\r'.charCodeAt(0) ||
-            c == '\n'.charCodeAt(0);
+            c == '\n'.charCodeAt(0)
+        );
     }
 
     private static decode(c: number): number {

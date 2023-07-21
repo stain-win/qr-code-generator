@@ -1,6 +1,14 @@
 import {Base64DecodeInputStream} from '../io/Base64DecodeInputStream';
 import {ByteArrayInputStream} from '../io/ByteArrayInputStream';
 
+export function toBytes(s: string): number[] {
+    const bytes: number[] = [];
+    for (let i = 0; i < s.length; i += 1) {
+        bytes.push(s.charCodeAt(i));
+    }
+    return bytes;
+}
+
 /**
  * createStringToBytes
  * @author Kazuhiko Arase
@@ -12,13 +20,6 @@ export function createStringToBytes(
     unicodeData: string,
     numChars: number
 ): (s: string) => number[] {
-    function toBytes(s: string): number[] {
-        const bytes: number[] = [];
-        for (let i = 0; i < s.length; i += 1) {
-            bytes.push(s.charCodeAt(i));
-        }
-        return bytes;
-    }
 
     // create conversion map.
     const unicodeMap = function () {

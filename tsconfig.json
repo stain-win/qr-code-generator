@@ -20,6 +20,9 @@
   },
   "files": [],
   "include": [],
+  "paths": {
+    "@stain-win/qr-code-generator": ["./src/index.ts"],
+  },
   "references": [
     {
       "path": "./tsconfig.lib.json"

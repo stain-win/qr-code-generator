@@ -1,6 +1,6 @@
 import {OutputStream} from '../io/OutputStream';
 import {ByteArrayOutputStream} from '../io/ByteArrayOutputStream';
-import {Base64} from '../io/Base64';
+import {encode} from '../io/Base64';
 
 /**
  * GIF Image (B/W)
@@ -182,7 +182,7 @@ export class GIFImage {
         this.write(bout);
         bout.close();
         let s = '';
-        const bytes = Base64.encode(bout.toByteArray());
+        const bytes = encode(bout.toByteArray());
         for (let i = 0; i < bytes.length; i += 1) {
             s += String.fromCharCode(bytes[i]);
         }

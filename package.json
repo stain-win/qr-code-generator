@@ -21,6 +21,7 @@
     "@nx/js": "16.5.2",
     "@nx/linter": "16.5.2",
     "@nx/vite": "16.5.2",
+    "@nx/web": "^16.5.4",
     "@nx/workspace": "16.5.2",
     "@types/node": "18.7.1",
     "@typescript-eslint/eslint-plugin": "^5.60.1",

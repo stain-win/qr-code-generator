@@ -18,12 +18,17 @@
 import {ErrorCorrectLevel} from './errorCorrectLevel';
 import {QRData} from './qrData';
 import {QR8BitByte} from './8BitByte';
-import {QRUtil} from './utils';
-import {RSBlock} from './rsBlock';
-import {BitBuffer} from './bitBuffer';
-import {Polynomial} from './polynomial';
 import {GIFImage} from '../image/GIFImage';
 import {stringToBytes_SJIS} from '../text/stringToBytes_SJIS';
+import {
+    getBCHTypeInfo,
+    getBCHTypeNumber,
+    getErrorCorrectPolynomial,
+    getLostPoint,
+    getMaskFunc,
+    getPatternPosition
+} from "./utils";
+import { createData } from "./encode";
 
 /**
  * QRCode
@@ -32,17 +37,12 @@ import {stringToBytes_SJIS} from '../text/stringToBytes_SJIS';
 export class QRCode {
 
     private static PAD0 = 0xEC;
-
     private static PAD1 = 0x11;
 
     private typeNumber: number;
-
     private errorCorrectLevel: ErrorCorrectLevel;
-
     private _qrDataList: QRData[];
-
     private _modules: boolean[][];
-
     private moduleCount: number;
 
     public constructor() {
@@ -122,7 +122,7 @@ export class QRCode {
 
             this.makeImpl(true, i);
 
-            const lostPoint = QRUtil.getLostPoint(this);
+            const lostPoint = getLostPoint(this);
 
             if (i == 0 || minLostPoint > lostPoint) {
                 minLostPoint = lostPoint;
@@ -158,7 +158,7 @@ export class QRCode {
             this.setupTypeNumber(test);
         }
 
-        const data = QRCode.createData(
+        const data = createData(
             this.typeNumber, this.errorCorrectLevel, this._qrDataList);
         this.mapData(data, maskPattern);
     }
@@ -169,7 +169,7 @@ export class QRCode {
         let row = this.moduleCount - 1;
         let bitIndex = 7;
         let byteIndex = 0;
-        const maskFunc = QRUtil.getMaskFunc(maskPattern);
+        const maskFunc = getMaskFunc(maskPattern);
 
         for (let col = this.moduleCount - 1; col > 0; col -= 2) {
 
@@ -218,7 +218,7 @@ export class QRCode {
 
     private setupPositionAdjustPattern(): void {
 
-        const pos = QRUtil.getPatternPosition(this.typeNumber);
+        const pos = getPatternPosition(this.typeNumber);
 
         for (let i = 0; i < pos.length; i += 1) {
 
@@ -285,9 +285,8 @@ export class QRCode {
     }
 
     private setupTypeNumber(test: boolean): void {
-
         let i;
-        const bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        const bits = getBCHTypeNumber(this.typeNumber);
 
         for (i = 0; i < 18; i += 1) {
             this._modules[~~(i / 3)][i % 3 + this.moduleCount - 8 - 3] =
@@ -305,7 +304,7 @@ export class QRCode {
         let mod;
         let i;
         const data = (this.errorCorrectLevel << 3) | maskPattern;
-        const bits = QRUtil.getBCHTypeInfo(data);
+        const bits = getBCHTypeInfo(data);
 
         // vertical
         for (i = 0; i < 15; i += 1) {
@@ -337,147 +336,6 @@ export class QRCode {
 
         // fixed
         this._modules[this.moduleCount - 8][8] = !test;
-    }
-
-    public static createData(
-        typeNumber: number,
-        errorCorrectLevel: ErrorCorrectLevel,
-        dataArray: QRData[]
-    ): number[] {
-
-        let i;
-        const rsBlocks: RSBlock[] = RSBlock.getRSBlocks(
-            typeNumber, errorCorrectLevel);
-
-        const buffer = new BitBuffer();
-
-        for (i = 0; i < dataArray.length; i += 1) {
-            const data = dataArray[i];
-            buffer.put(data.getMode(), 4);
-            buffer.put(data.getLength(), data.getLengthInBits(typeNumber));
-            data.write(buffer);
-        }
-
-        // calc max data count
-        let totalDataCount = 0;
-        for (i = 0; i < rsBlocks.length; i += 1) {
-            totalDataCount += rsBlocks[i].getDataCount();
-        }
-
-        if (buffer.getLengthInBits() > totalDataCount * 8) {
-            throw 'code length overflow. ('
-            + buffer.getLengthInBits()
-            + '>'
-            + totalDataCount * 8
-            + ')';
-        }
-
-        // end
-        if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
-            buffer.put(0, 4);
-        }
-
-        // padding
-        while (buffer.getLengthInBits() % 8 != 0) {
-            buffer.putBit(false);
-        }
-
-        // padding
-        while (true) {
-
-            if (buffer.getLengthInBits() >= totalDataCount * 8) {
-                break;
-            }
-            buffer.put(QRCode.PAD0, 8);
-
-            if (buffer.getLengthInBits() >= totalDataCount * 8) {
-                break;
-            }
-            buffer.put(QRCode.PAD1, 8);
-        }
-
-        return QRCode.createBytes(buffer, rsBlocks);
-    }
-
-    private static createBytes(
-        buffer: BitBuffer,
-        rsBlocks: RSBlock[]
-    ): number[] {
-
-        let i;
-        let r;
-        let offset = 0;
-
-        let maxDcCount = 0;
-        let maxEcCount = 0;
-
-        const dcdata: number[][] = [];
-        const ecdata: number[][] = [];
-
-        for (r = 0; r < rsBlocks.length; r += 1) {
-            dcdata.push([]);
-            ecdata.push([]);
-        }
-
-        function createNumArray(len: number): number[] {
-            const a: number[] = [];
-            for (let i = 0; i < len; i += 1) {
-                a.push(0);
-            }
-            return a;
-        }
-
-        for (r = 0; r < rsBlocks.length; r += 1) {
-
-            const dcCount = rsBlocks[r].getDataCount();
-            const ecCount = rsBlocks[r].getTotalCount() - dcCount;
-
-            maxDcCount = Math.max(maxDcCount, dcCount);
-            maxEcCount = Math.max(maxEcCount, ecCount);
-
-            dcdata[r] = createNumArray(dcCount);
-            for (i = 0; i < dcdata[r].length; i += 1) {
-                dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
-            }
-            offset += dcCount;
-
-            const rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
-            const rawPoly = new Polynomial(dcdata[r], rsPoly.getLength() - 1);
-
-            const modPoly = rawPoly.mod(rsPoly);
-            ecdata[r] = createNumArray(rsPoly.getLength() - 1);
-            for (i = 0; i < ecdata[r].length; i += 1) {
-                const modIndex = i + modPoly.getLength() - ecdata[r].length;
-                ecdata[r][i] = (modIndex >= 0) ? modPoly.getAt(modIndex) : 0;
-            }
-        }
-
-        let totalCodeCount = 0;
-        for (i = 0; i < rsBlocks.length; i += 1) {
-            totalCodeCount += rsBlocks[i].getTotalCount();
-        }
-
-        const data = createNumArray(totalCodeCount);
-        let index = 0;
-
-        for (i = 0; i < maxDcCount; i += 1) {
-            for (r = 0; r < rsBlocks.length; r += 1) {
-                if (i < dcdata[r].length) {
-                    data[index] = dcdata[r][i];
-                    index += 1;
-                }
-            }
-        }
-
-        for (i = 0; i < maxEcCount; i += 1) {
-            for (r = 0; r < rsBlocks.length; r += 1) {
-                if (i < ecdata[r].length) {
-                    data[index] = ecdata[r][i];
-                    index += 1;
-                }
-            }
-        }
-        return data;
     }
 
     public toDataURL(cellSize = 2, margin = cellSize * 4): string {
