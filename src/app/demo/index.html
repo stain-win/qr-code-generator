@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Demo</title>
+    <base href="/"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+    <link rel="stylesheet" href="/src/styles.scss"/>
+</head>
+<body>
+<app-root></app-root>
+<template id="content">
+    <style>
+        :host {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+<!--    <link rel="stylesheet" href="/src/styles.scss"/>-->
+    <div class="wrapper">
+        <div class="container">
+            <!--  WELCOME  -->
+            <div id="welcome">
+                <h1>
+                    <span> Hello there, 👋</span>
+                </h1>
+            </div>
+            <p id="love">
+                Carefully crafted with ❤️
+            </p>
+            <div id="qr-code"></div>
+        </div>
+    </div>
+</template>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

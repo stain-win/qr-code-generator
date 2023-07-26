@@ -23,7 +23,6 @@ import {stringToBytes_SJIS} from '../text/stringToBytes_SJIS';
 import {
     getBCHTypeInfo,
     getBCHTypeNumber,
-    getErrorCorrectPolynomial,
     getLostPoint,
     getMaskFunc,
     getPatternPosition
@@ -35,18 +34,14 @@ import { createData } from "./encode";
  * @author Kazuhiko Arase
  */
 export class QRCode {
-
-    private static PAD0 = 0xEC;
-    private static PAD1 = 0x11;
-
     private typeNumber: number;
     private errorCorrectLevel: ErrorCorrectLevel;
     private _qrDataList: QRData[];
-    private _modules: boolean[][];
-    private moduleCount: number;
+    private _modules: boolean[][] = [];
+    private moduleCount = 0;
 
     public constructor() {
-        this.typeNumber = 1;
+        this.typeNumber = 0;
         this.errorCorrectLevel = ErrorCorrectLevel.L;
         this._qrDataList = [];
     }
@@ -80,6 +75,7 @@ export class QRCode {
     }
 
     public addData(qrData: QRData | string): void {
+        console.log('qrData', qrData);
         if (qrData instanceof QRData) {
             this._qrDataList.push(qrData);
         } else if (typeof qrData === 'string') {
@@ -134,7 +130,6 @@ export class QRCode {
     }
 
     private makeImpl(test: boolean, maskPattern: number): void {
-
         // initialize modules
         this.moduleCount = this.typeNumber * 4 + 17;
         this._modules = [];
@@ -144,7 +139,8 @@ export class QRCode {
                 this._modules[i].push(null);
             }
         }
-
+        console.log(getBCHTypeNumber(this.typeNumber), 'typeNumber' ,test);
+        console.log(this.moduleCount, 'moduleCount');
         this.setupPositionProbePattern(0, 0);
         this.setupPositionProbePattern(this.moduleCount - 7, 0);
         this.setupPositionProbePattern(0, this.moduleCount - 7);
@@ -285,6 +281,7 @@ export class QRCode {
     }
 
     private setupTypeNumber(test: boolean): void {
+
         let i;
         const bits = getBCHTypeNumber(this.typeNumber);
 
@@ -305,7 +302,7 @@ export class QRCode {
         let i;
         const data = (this.errorCorrectLevel << 3) | maskPattern;
         const bits = getBCHTypeInfo(data);
-
+        console.log('bits', bits, data, test);
         // vertical
         for (i = 0; i < 15; i += 1) {
 

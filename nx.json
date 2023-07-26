@@ -13,6 +13,9 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
+    "test": {
+      "inputs": ["default", "^production"]
+    },
     "lint": {
       "inputs": [
         "default",
@@ -20,7 +23,7 @@
         "{workspaceRoot}/.eslintignore"
       ]
     },
-    "test": {
+    "e2e": {
       "inputs": ["default", "^production"]
     }
   },
@@ -28,10 +31,24 @@
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
+      "{workspaceRoot}/package-lock.json",
       "!{projectRoot}/.eslintrc.json",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
-      "!{projectRoot}/tsconfig.spec.json"
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/.eslintrc.json"
     ],
     "sharedGlobals": []
+  },
+  "workspaceLayout": {
+    "appsDir": "src/app",
+    "libsDir": "src/lib"
+  },
+  "generators": {
+    "@nx/web:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "vitest",
+      "e2eTestRunner": "cypress"
+    }
   }
 }

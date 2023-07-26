@@ -40,13 +40,14 @@ export function createData(
     }
 
     if (buffer.getLengthInBits() > totalDataCount * 8) {
-        throw (
-            'code length overflow. (' +
-            buffer.getLengthInBits() +
-            '>' +
-            totalDataCount * 8 +
-            ')'
-        );
+        // throw (
+        //     'code length overflow. (' +
+        //     buffer.getLengthInBits() +
+        //     '>' +
+        //     totalDataCount * 8 +
+        //     ')'
+        // );
+        createData(typeNumber + 1, errorCorrectLevel, dataArray);
     }
 
     // end
@@ -71,7 +72,7 @@ export function createData(
         }
         buffer.put(PAD1, 8);
     }
-
+    console.log(typeNumber);
     return createBytes(buffer, rsBlocks);
 }
 

@@ -1,0 +1,13 @@
+{
+  "name": "@stain-win/qr-code-generator",
+  "version": "0.0.2",
+  "type": "commonjs",
+  "scripts": {
+    "build": "nx build",
+    "test": "nx test",
+    "changelog": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s",
+    "prepublishOnly": "npm run build && npm run test",
+    "release": "standard-version -a -t ''",
+    "release:dry": "standard-version -t '' --dry-run"
+  }
+}

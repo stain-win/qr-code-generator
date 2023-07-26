@@ -1,15 +1,15 @@
 {
   "name": "@stain-win/qr-code-generator",
-  "$schema": "node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "src",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "src/lib/qr-code-generator/src",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/qr-code-generator",
-        "main": "./src/index.ts",
+        "main": "./src/lib/qr-code-generator/index.ts",
         "tsConfig": "./tsconfig.lib.json",
         "assets": ["*.md"]
       }
@@ -26,7 +26,20 @@
       "outputs": ["coverage/qr-code-generator"],
       "options": {
         "passWithNoTests": true,
-        "reportsDirectory": "coverage/qr-code-generator"
+        "reportsDirectory": "../../coverage/qr-code-generator"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["src/lib/qr-code-generator/**/*.ts"]
+      }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm publish"
       }
     }
   },

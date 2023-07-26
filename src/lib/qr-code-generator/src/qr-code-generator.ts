@@ -6,7 +6,9 @@ export class QrCodeGenerator extends QRCode {
   }
 
   createSegments (text: string): void {
-    this.addData(new QR8BitByte(text));
+    console.log(new QR8BitByte(text));
+    // this.addData(new QR8BitByte(text));
+    this.addData(text);
   }
 
   encode (text: string): void {
